@@ -6,14 +6,14 @@ sip.setapi('QVariant', 2)
 import math
 
 from PyQt4 import QtCore, QtGui, QtNetwork
-from Point import Point
-from TileOperations import *
+from lib.Point import Point
+from TileServers.TileOperations import *
 
 TDIM = 256
 
 class TileDownloader(QtNetwork.QNetworkAccessManager):
     def __init__(self):
-        super(TileDownloadr, self).__init__()
+        super(TileDownloader, self).__init__()
 
         cache = QtNetwork.QNetworkDiskCache()
         cache.setCacheDirectory(

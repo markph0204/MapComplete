@@ -9,8 +9,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtNetwork import *
 
-from Point import Point
-from TileOperations import *
+from lib.Point import Point
+from TileServers.TileOperations import *
+
+from FeatureDemos.MapWithLens import *
 
 
 rad = 6
@@ -80,12 +82,12 @@ class LineString(QGraphicsPathItem):
 
 class MapScene(QGraphicsScene):
 
-    updated = QtCore.pyqtSignal(QtCore.QRect)
+    updated = pyqtSignal(QRect)
 
     def __init__(self, view):
         super(MapScene, self).__init__(view)
 
-        self._offset = QtCore.QPoint()
+        self._offset = QPoint()
         self._tilesRect = QRect()
         self._tilePixmaps = {}
 
@@ -158,7 +160,7 @@ class MapScene(QGraphicsScene):
         url = reply.url()
         if not reply.error():
             if img.load(reply, None):
-                img.save("last.png")
+                #img.save("last.png")
                 self._tilePixmaps[tp] = QPixmap.fromImage(img)
         reply.deleteLater()
         self.updated.emit(self.tileRect(tp))
