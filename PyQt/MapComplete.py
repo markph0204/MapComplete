@@ -1,19 +1,23 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+from widgets.MapView import *
+
 
 class MapComplete(QApplication):
 
     def __init__(self, args):
         super(MapComplete, self).__init__(args)
 
-        # Of course this should be the entry point were interface is
-        # fleshed-out with real widgets
-        self.hellobutton = QPushButton("Click MapComplete", None)
-        self.hellobutton.clicked.connect(self.handleButton)
-        self.hellobutton.show()
+        # TODO: should use QMainWindow?
+        widget = MapView()
+        widget.show()
 
-        self.exec_()    # enter event loop
+        self.exec_()
 
-    def handleButton(self):
-        print ("Nice, isn't it?")
+
+if __name__ == '__main__':
+    import sys
+    from MapComplete import MapComplete
+
+    mapComplete = MapComplete(sys.argv)

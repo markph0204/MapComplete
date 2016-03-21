@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding: utf-8
 
 import sip
 sip.setapi('QVariant', 2)
@@ -142,9 +143,10 @@ class SlippyMap(QtCore.QObject):
             self._url = QtCore.QUrl()
             return
 
+        ### NETWORK STUFF GOING ON HERE ###
+
         #path = 'http://tile.openstreetmap.org/%d/%d/%d.png' % (self.zoom, grab.x(), grab.y())
         path = 'https://mts2.google.com/vt?lyrs=m&x={0}&y={1}&z={2}'.format(grab.x(), grab.y(), self.zoom)
-        print path
         self._url = QtCore.QUrl(path)
         request = QtNetwork.QNetworkRequest()
         request.setUrl(self._url)
