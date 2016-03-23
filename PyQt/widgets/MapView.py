@@ -1,99 +1,15 @@
-#!/usr/bin/env python
 # coding: utf-8
-
-import re
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from TileServers.TileOperations import *
-
-TDIM = 256
-
-class MapScene(QGraphicsScene):
-
-    updated = pyqtSignal(QRect)
-
-    def __init__(self, view):
-        super(MapScene, self).__init__(view)
-
-        # self._tileManager = TileManager()
-
-    def drawBackground(self, painter, rect):
-        self.drawBackgroundInSceneCoordinates(painter, rect)
-        # self.drawBackgroundInViewCoordinates(painter, rect)
-
-    def drawBackgroundInViewCoordinates(self, painter, rect):
-        zoomlevel = self.parent().zoom
-        # rect = QRect(QPoint(0,0), self.parent().viewport().size())
-
-        pixels = 2**zoomlevel*TDIM
-        v = self.parent()
-        center = v.mapToScene(v.viewport().rect()).boundingRect().center()
-        pixelcenter = latlontopixels(center.y(), center.x(), zoomlevel)
-        x = pixelcenter.x()
-        y = pixelcenter.y()
-        xi = int((pixels-y))/TDIM
-        yi = int((pixels-x))/TDIM
-        xoff = x%TDIM
-        yoff = y%TDIM
-
-        # ... needs to be continued
-
-
-    def drawBackgroundInSceneCoordinates(self, painter, rect):
-        painter.eraseRect(rect)
-
-
-        painter.drawRect(0, 0, 255, 255)
-
-
-        painter.save()
-
-        tx, ty, tz = 1,2,2
-        tx *= TDIM
-        ty *= TDIM
-        # ty *= TDIM
-        painter.scale(1.0/2**tz, -1.0/2**tz)
-        painter.translate(tx, -ty)
-        # print tx, ty, tz
-        # tilerect = QRect(tx, ty, TDIM, TDIM)
-        # painter.drawPixmap(0, 0, self._tileManager.getTile(tx, ty, tz))
-
-        painter.restore()
-
-
-
-    def drawCosmeticText(self, painter, rect, string, fontsize = 0.1):
-        painter.save()
-
-        painter.translate(rect.center())
-
-        scalex = self.parent().transform().m11()
-        scaley = self.parent().transform().m22()
-        # painter.scale(1/scalex, 1/scaley)
-
-        painter.drawText(0, 0, QString("i"))
-
-        # font = QFont(painter.font())
-        # size = fontsize / self.parent().transform().m11()
-        # font.setPointSizeF(0.01)
-        # painter.setFont(font)
-
-        # painter.translate(rect.center())
-        # painter.scale(1,-1)
-
-        # painter.drawText(QRectF(-1000, -1000, 2000, 2000), Qt.AlignHCenter|Qt.AlignVCenter, QString("s"))
-
-        painter.restore()
-
-
-
+from MapScene import *
 
 
 class MapView(QGraphicsView):
 
-    MINZOOM = 0
+    MINZOOM = 1
     MAXZOOM = 20
 
     def __init__(self):
@@ -101,11 +17,9 @@ class MapView(QGraphicsView):
 
         scene = MapScene(self)
         scene.setItemIndexMethod(QGraphicsScene.NoIndex)
-        scene.setSceneRect(0,0,256,256)
+        scene.setSceneRect(0,0,TILE_SIZE,TILE_SIZE)
 
         self.setScene(scene)
-
-        # self.scale(self.zoom,-self.zoom)
 
         self.setCacheMode(QGraphicsView.CacheNone)
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
@@ -117,6 +31,20 @@ class MapView(QGraphicsView):
 
         self.zoom = 0
 
+        # THIS IS WRONG! THE SCENE IS THE RIGHT PLACE TO ADD STUFF
+        self.drawContinents()
+
+        self.zoom = self.MINZOOM
+
+        self.centerOn(128,128)
+
+
+
+
+
+
+    ## REFACTOR: THIS SHOULD HAPPEN IN THE SCENE, NOT THE VIEW!
+    def drawContinents(self):
         self.addLineString("-51.03813197260379,-29.91035059896753,0 -50.95606810370248,-29.8572738257228,0 -50.92661460776048,-29.85689211938051,0 -50.89108115377536,-29.77213338011879,0 -50.83985960336476,-29.73274214104657,0 -50.83225558614761,-29.69428461538246,0 -50.80736906730255,-29.68971315154711,0 -50.77878735707862,-29.66149639266348,0")
 
         # america do sul
@@ -135,12 +63,8 @@ class MapView(QGraphicsView):
         self.addLineString("-80.97471365812204,7.072898504597545,0 -104.1593732016747,17.91032961549367,0 -122.2950728495846,38.10565373437438,0 -142.7006233940847,60.60380574281029,0 -155.4676171949063,57.74012994334744,0 -171.1151829922527,60.68649940662308,0 -161.3401051714498,72.18496330118391,0 -133.3060709063911,69.83962755846888,0 -102.3045703523962,71.53366778717363,0 -73.6199935104686,83.26355338813467,0 -10.84351240606494,78.8017624443011,0 -23.79080245113048,68.13691647233627,0 -41.86603957501037,59.65993230445414,0 -50.47352369413404,63.32784282116268,0 -47.36264361197486,71.22373563599645,0 -79.32947295325087,77.51495027770856,0 -63.28334130859357,62.31949846985006,0 -83.60396507314881,68.9894665715594,0 -95.34124916900493,60.34323883694532,0 -79.91976320960981,53.06129707770148,0 -73.66040083032091,62.27905730917512,0 -51.32549052627511,47.12839674630082,0 -72.79617513850565,39.31557394822016,0 -80.91464135339355,31.5095825797659,0 -79.06944769431993,23.65600291370022,0 -87.01594437634753,30.45918731194382,0 -97.94684336489077,26.82446105991626,0 -97.59168815261036,21.19291801981637,0 -87.58608461732283,21.71642583209461,0 -83.49485336708535,13.07884702915453,0")
 
 
-        self.zoom = 2
-        self.centerOn(128,128)
-
-    # def centerOn(self, )
-
     def addLineString(self, kmlLineString):
+        import re
         coordtuples = re.split('\s+', kmlLineString.strip())
         coords = []
         for coordtuple in coordtuples:
@@ -148,11 +72,6 @@ class MapView(QGraphicsView):
             coordvalues[0] = (coordvalues[0] + 180) % 360 - 180
             lat, lon = latlontopixels(coordvalues[1], coordvalues[0], self.zoom)
             coords.append((lat, lon))
-
-        # coordvalues = map(float, coordtuple)
-        # coords = []
-        #     lat, lon = latlontopixels(lat, lon, zoom)
-        # coords = [map(float, latlontopixels(*coordtuple.split(',')[:2], self.zoom)) for coordtuple in coordtuples]
 
         path = QPainterPath()
         start = coords[0]
@@ -166,6 +85,10 @@ class MapView(QGraphicsView):
         pen.setCosmetic(True)
         pathitem.setPen(pen)
         self.scene().addItem(pathitem)
+
+
+
+
 
 
     def wheelEvent(self, event):

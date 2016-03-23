@@ -10,6 +10,7 @@ from PyQt4 import QtCore, QtGui, QtNetwork
 from lib.Point import Point
 from widgets.TileServers.TileOperations import *
 
+TDIM = 256
 
 class TileDownloader(QtNetwork.QNetworkAccessManager):
     def __init__(self):
