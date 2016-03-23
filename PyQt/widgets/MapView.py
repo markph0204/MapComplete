@@ -9,37 +9,37 @@ from MapScene import *
 
 class MapView(QGraphicsView):
 
-    MINZOOM = 1
+    MINZOOM = 0
     MAXZOOM = 20
 
     def __init__(self):
         super(MapView, self).__init__()
 
+        self.configureView()
+
+        self.zoom = self.MINZOOM
+
         scene = MapScene(self)
-        scene.setItemIndexMethod(QGraphicsScene.NoIndex)
-        scene.setSceneRect(0,0,TILE_SIZE,TILE_SIZE)
-
         self.setScene(scene)
+        self.ensureVisible(self.scene().sceneRect())
 
+
+
+
+    def configureView(self):
         self.setCacheMode(QGraphicsView.CacheNone)
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         # self.setRenderHint(QPainter.Antialiasing)
         # self.setRenderHint(QPainter.SmoothPixmapTransform)
+        
+        # perform zoom around mouse position
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        
+        # keep centered while resizing
         self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
-        self.setDragMode(QGraphicsView.ScrollHandDrag)
 
-        self.zoom = 0
-
-        # THIS IS WRONG! THE SCENE IS THE RIGHT PLACE TO ADD STUFF
-        self.drawContinents()
-
-        self.zoom = self.MINZOOM
-
-        self.centerOn(128,128)
-
-
-
+        # make draggable
+        self.setDragMode(QGraphicsView.ScrollHandDrag)        
 
 
 

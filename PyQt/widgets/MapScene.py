@@ -12,6 +12,11 @@ class MapScene(QGraphicsScene):
     def __init__(self, view):
         super(MapScene, self).__init__(view)
 
+        # Is this the zoom level we want to associate our sceneRect to?
+        self.setSceneRect(0,0,TILE_SIZE,TILE_SIZE)
+
+        self.setItemIndexMethod(QGraphicsScene.NoIndex)        
+
     def drawBackground(self, painter, rect):
         self.drawBackgroundInSceneCoordinates(painter, rect)
 
