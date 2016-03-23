@@ -44,7 +44,7 @@ class SlippyMap(QtCore.QObject):
         self.latitude = -30
         self.longitude = -51.2
 
-        self._emptyTile = QtGui.QPixmap(TDIM, TDIM)
+        self._emptyTile = QtGui.QPixmap(TILE_SIZE, TILE_SIZE)
         self._emptyTile.fill(QtCore.Qt.lightGray)
 
 
@@ -61,21 +61,21 @@ class SlippyMap(QtCore.QObject):
         # ty = ct.y()
 
         # top-left corner of the center tile
-        xp = int(self.width / 2 - (tx - math.floor(tx)) * TDIM)
-        yp = int(self.height / 2 - (ty - math.floor(ty)) * TDIM)
+        xp = int(self.width / 2 - (tx - math.floor(tx)) * TILE_SIZE)
+        yp = int(self.height / 2 - (ty - math.floor(ty)) * TILE_SIZE)
 
         # first tile vertical and horizontal
-        xa = (xp + TDIM - 1) / TDIM
-        ya = (yp + TDIM - 1) / TDIM
+        xa = (xp + TILE_SIZE - 1) / TILE_SIZE
+        ya = (yp + TILE_SIZE - 1) / TILE_SIZE
         xs = int(tx) - xa
         ys = int(ty) - ya
 
         # offset for top-left tile
-        self._offset = QtCore.QPoint(xp - xa * TDIM, yp - ya * TDIM)
+        self._offset = QtCore.QPoint(xp - xa * TILE_SIZE, yp - ya * TILE_SIZE)
 
         # last tile vertical and horizontal
-        xe = int(tx) + (self.width - xp - 1) / TDIM
-        ye = int(ty) + (self.height - yp - 1) / TDIM
+        xe = int(tx) + (self.width - xp - 1) / TILE_SIZE
+        ye = int(ty) + (self.height - yp - 1) / TILE_SIZE
 
         # build a rect
         self._tilesRect = QtCore.QRect(xs, ys, xe - xs + 1, ye - ys + 1)
@@ -96,7 +96,7 @@ class SlippyMap(QtCore.QObject):
                     painter.drawPixmap(box, self._tilePixmaps.get(tp, self._emptyTile))
 
     def pan(self, delta):
-        dx = QtCore.QPointF(delta) / float(TDIM)
+        dx = QtCore.QPointF(delta) / float(TILE_SIZE)
         cx, cy = tileIndexForCoordinate(self.latitude, self.longitude, self.zoom)
         center = QtCore.QPointF(cx, cy) - dx
         self.latitude = latitudeFromTileY(center.y(), self.zoom)
@@ -145,7 +145,7 @@ class SlippyMap(QtCore.QObject):
         ### NETWORK STUFF GOING ON HERE ###
 
         #path = 'http://tile.openstreetmap.org/%d/%d/%d.png' % (self.zoom, grab.x(), grab.y())
-        path = 'https://mts2.google.com/vt?lyrs=m&x={0}&y={1}&z={2}'.format(grab.x(), grab.y(), self.zoom)
+        path = 'https://mts2.google.com/vt?lyrs=y&x={0}&y={1}&z={2}'.format(grab.x(), grab.y(), self.zoom)
         self._url = QtCore.QUrl(path)
         request = QtNetwork.QNetworkRequest()
         request.setUrl(self._url)
@@ -159,7 +159,7 @@ class SlippyMap(QtCore.QObject):
 
     def tileRect(self, tp):
         t = tp - self._tilesRect.topLeft()
-        x = t.x() * TDIM + self._offset.x()
-        y = t.y() * TDIM + self._offset.y()
+        x = t.x() * TILE_SIZE + self._offset.x()
+        y = t.y() * TILE_SIZE + self._offset.y()
 
-        return QtCore.QRect(x, y, TDIM, TDIM)
+        return QtCore.QRect(x, y, TILE_SIZE, TILE_SIZE)
