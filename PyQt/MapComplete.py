@@ -10,8 +10,9 @@ class MapComplete(QApplication):
         super(MapComplete, self).__init__(args)
 
         # TODO: should use QMainWindow?
-        widget = MapView()
-        widget.show()
+        mapView = MapView()
+        # mapView.showMaximized()
+        mapView.show()
 
         self.exec_()
 
