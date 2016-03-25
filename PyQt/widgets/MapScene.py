@@ -1,5 +1,7 @@
 #coding:utf-8
 
+import os
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -20,10 +22,12 @@ class MapScene(QGraphicsScene):
     def __init__(self, view):
         super(MapScene, self).__init__(view)
 
-        self.view = view;
+        self.view = view;        
 
         # Is this the zoom level we want to associate our sceneRect to?
-        self.setSceneRect(0,0,TILE_SIZE,TILE_SIZE)
+        #self.setSceneRect(0,0,TILE_SIZE,TILE_SIZE)
+
+        self.tileServer = GoogleTileServer()
 
         self.setItemIndexMethod(QGraphicsScene.NoIndex)
 
@@ -36,7 +40,6 @@ class MapScene(QGraphicsScene):
 
 
     def drawBackground(self, painter, rect):
-        import os
 
         painter.eraseRect(rect)
 
@@ -44,38 +47,41 @@ class MapScene(QGraphicsScene):
 
         z = self.view.zoom
 
-        painter.scale(1.0/2**z, -1.0/2**z)
-        painter.translate(0, -TILE_SIZE)
-
+        #painter.scale(1.0/2**z, -1.0/2**z)
+        #painter.translate(0, -TILE_SIZE)
 
         viewport = self.view.mapToScene(self.view.viewport().geometry()).boundingRect()
 
+        filename = "0_0_0.jpg"
 
+        for row in xrange(2**z):
+            for col in xrange(2**z):
 
+                painter.save()
 
+                posx = col * TILE_SIZE / 2**z
+                posy = (row + 1) * TILE_SIZE / 2**z
+                scalex = 1.0/2**z
+                scaley = -1.0/2**z
 
-        tileFname = os.path.join(os.getcwd(), '0_0_0.jpg')
+                painter.translate(posx, posy)
+                painter.scale(scalex, scaley)
 
-        # print tileFname
+                self.drawGridCell(painter, col, row, z)
+                
+                painter.restore()
 
-        painter.drawPixmap(0, 0, QPixmap(tileFname))
+    def drawGridCell(self, painter, col, row):
+        z = self.view.zoom
+        size = 2**z
+        first = col;
+        second = size - row - 1
 
-        # painter.translate(tx, -ty)
+        imagename = "{}_{}_{}.jpg".format(first, second, z)
+        filename = os.path.join(os.getcwd(), imagename);
 
-        # painter.save()
+        painter.drawPixmap(0, 0, QPixmap(filename))        
 
-        # ### USE TILE INFORMATION HERE INSTEAD OF THESE HARDCODED STUFF!
-
-        # tx, ty, tz = 1,2,2
-        # tx *= TILE_SIZE
-        # ty *= TILE_SIZE
-        # # ty *= TILE_SIZE
-        # painter.scale(1.0/2**tz, -1.0/2**tz)
-        # painter.translate(tx, -ty)
-        # tilerect = QRect(tx, ty, TILE_SIZE, TILE_SIZE)
-        # # painter.drawPixmap(0, 0, self._tileManager.getTile(tx, ty, tz))
-
-        # painter.restore()
 
     def getVisibleTiles(self, rect):
         import os

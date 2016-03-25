@@ -55,4 +55,5 @@ class MapView(QGraphicsView):
     def zoom(self, z):
         self._zoom = z
         scale = 2**z
-        self.setTransform(QTransform(scale,0,0,-scale,0,0))
+        translate = scale * TILE_SIZE
+        self.setTransform(QTransform(scale,0,0,-scale,0,translate))
