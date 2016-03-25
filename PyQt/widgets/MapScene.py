@@ -25,7 +25,7 @@ class MapScene(QGraphicsScene):
         self.view = view;        
 
         # Is this the zoom level we want to associate our sceneRect to?
-        self.setSceneRect(0,0,TILE_SIZE,TILE_SIZE)
+        #self.setSceneRect(0,0,TILE_SIZE,TILE_SIZE)
 
         #self.tileServer = GoogleTileServer()
 
