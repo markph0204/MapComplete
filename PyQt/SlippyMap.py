@@ -22,6 +22,9 @@ class TileDownloader(QtNetwork.QNetworkAccessManager):
         self.setCache(cache)
 
 
+        self.finished.connect(self.handleNetworkData)
+
+
 class SlippyMap(QtCore.QObject):
 
     updated = QtCore.pyqtSignal(QtCore.QRect)

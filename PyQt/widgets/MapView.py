@@ -28,12 +28,10 @@ class MapView(QGraphicsView):
         self.setCacheMode(QGraphicsView.CacheNone)
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.setRenderHint(QPainter.Antialiasing)
-        
-        # self.setRenderHint(QPainter.SmoothPixmapTransform)
-        
+
         # perform zoom around mouse position
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        
+
         # keep centered while resizing
         self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
 

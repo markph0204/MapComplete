@@ -4,8 +4,10 @@ import os
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtNetwork import *
 
 from TileServers.TileOperations import *
+from TileServers.SimpleGoogleTileServer import *
 
 # class GGraphicsPathItem(QGraphicsPathItem):
 #     def __init__(self, latlonpath):
@@ -13,6 +15,7 @@ from TileServers.TileOperations import *
 #         self.latlonpath = latlonpath
 
 #     def shape(self):
+    
 
 
 class MapScene(QGraphicsScene):
@@ -22,12 +25,13 @@ class MapScene(QGraphicsScene):
     def __init__(self, view):
         super(MapScene, self).__init__(view)
 
-        self.view = view;        
+        self.view = view;
 
         # Is this the zoom level we want to associate our sceneRect to?
         #self.setSceneRect(0,0,TILE_SIZE,TILE_SIZE)
 
-        #self.tileServer = GoogleTileServer()
+        self.tileServer = SimpleGoogleTileServer()
+        self.tileServer.updated.connect(self.invalidate)
 
         self.setItemIndexMethod(QGraphicsScene.NoIndex)
 
@@ -68,19 +72,19 @@ class MapScene(QGraphicsScene):
                 painter.scale(scalex, scaley)
 
                 self.drawGridCell(painter, col, row)
-                
+
                 painter.restore()
 
     def drawGridCell(self, painter, col, row):
         z = self.view.zoom
         size = 2**z
-        first = col;
-        second = size - row - 1
+        x = col;
+        y = size - row - 1
 
-        imagename = "{}_{}_{}.jpg".format(first, second, z)
+        imagename = "{}_{}_{}.jpg".format(x, y, z)
         filename = os.path.join(os.getcwd(), imagename);
 
-        painter.drawPixmap(0, 0, QPixmap(filename))        
+        painter.drawPixmap(0, 0, self.tileServer.getTile(x,y,z)) #QPixmap(filename))
 
 
     def getVisibleTiles(self, rect):
