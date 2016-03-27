@@ -10,20 +10,22 @@ from PyQt4.QtNetwork import *
 from lib.tileOperations import *
 #from tileServers import *
 
-class SimpleGoogleTileServer(QNetworkAccessManager):
+class SimpleGoogleTileServer(QObject):
 
     updated = pyqtSignal(tuple)
 
     def __init__(self):
+        self.networkManager = QNetworkAccessManager()
+
         super(SimpleGoogleTileServer, self).__init__()
 
         cache = QNetworkDiskCache()
         cacheDir = QDesktopServices.storageLocation(
             QDesktopServices.CacheLocation)
         cache.setCacheDirectory(cacheDir)
-        self.setCache(cache)
+        self.networkManager.setCache(cache)
 
-        self.finished.connect(self.processDownloadedTile)
+        self.networkManager.finished.connect(self.processDownloadedTile)
 
         self._tilePixmaps = {}
 
@@ -40,14 +42,14 @@ class SimpleGoogleTileServer(QNetworkAccessManager):
         tilekey = (x, y, z)
 
         if tilekey not in self._tilePixmaps:
-            print tilekey
+            #print tilekey
             url = self.urltemplate.format(x=x, y=y, z=z, r=random.choice(range(1,4)))
             qurl = QUrl(url)
             request = QNetworkRequest()
             request.setUrl(qurl)
             request.setRawHeader('User-Agent', 'Nokia (PyQt) Graphics Dojo 1.0')
             request.setAttribute(QNetworkRequest.User, tilekey)
-            self.get(request)
+            self.networkManager.get(request)
 
         return self._tilePixmaps.get(tilekey, self._emptyTile) #image_cache[tilekey]
 

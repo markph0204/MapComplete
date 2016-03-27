@@ -8,10 +8,14 @@ import math
 
 from PyQt4 import QtCore, QtGui, QtNetwork
 from lib.Point import Point
-from widgets.TileServers.TileOperations import *
+from lib.tileOperations import *
 
 
 class TileDownloader(QtNetwork.QNetworkAccessManager):
+
+    updated = QtCore.pyqtSignal(QtCore.QRect)
+
+
     def __init__(self):
         super(TileDownloader, self).__init__()
 
@@ -21,8 +25,66 @@ class TileDownloader(QtNetwork.QNetworkAccessManager):
                 (QtGui.QDesktopServices.CacheLocation))
         self.setCache(cache)
 
+        self._offset = QtCore.QPoint()
+        self._tilesRect = QtCore.QRect()
+        self._tilePixmaps = {} # Point(x, y) to QPixmap mapping
 
         self.finished.connect(self.handleNetworkData)
+
+    ############################
+
+    # slots
+    def handleNetworkData(self, reply):
+        img = QtGui.QImage()
+        tp = Point(reply.request().attribute(QtNetwork.QNetworkRequest.User))
+        url = reply.url()
+        if not reply.error():
+            if img.load(reply, None):
+                self._tilePixmaps[tp] = QtGui.QPixmap.fromImage(img)
+        reply.deleteLater()
+        self.updated.emit(self.tileRect(tp))
+
+        # purge unused tiles
+        bound = self._tilesRect.adjusted(-2, -2, 2, 2)
+        for tp in list(self._tilePixmaps.keys()):
+            if not bound.contains(tp):
+                del self._tilePixmaps[tp]
+        self.download()
+
+    def download(self):
+        grab = None
+        for x in range(self._tilesRect.width()):
+            for y in range(self._tilesRect.height()):
+                tp = Point(self._tilesRect.topLeft() + QtCore.QPoint(x, y))
+                if tp not in self._tilePixmaps:
+                    grab = QtCore.QPoint(tp)
+                    break
+
+        if grab is None:
+            self._url = QtCore.QUrl()
+            return
+
+        ### NETWORK STUFF GOING ON HERE ###
+
+        #path = 'http://tile.openstreetmap.org/%d/%d/%d.png' % (self.zoom, grab.x(), grab.y())
+        path = 'https://mts2.google.com/vt?lyrs=y&x={0}&y={1}&z={2}'.format(grab.x(), grab.y(), self.zoom)
+        self._url = QtCore.QUrl(path)
+        request = QtNetwork.QNetworkRequest()
+        request.setUrl(self._url)
+        request.setRawHeader('User-Agent', 'Nokia (PyQt) Graphics Dojo 1.0')
+        request.setAttribute(QtNetwork.QNetworkRequest.User, grab)
+        self._manager.get(request)
+
+    ################################
+
+
+
+    def tileRect(self, tp):
+        t = tp - self._tilesRect.topLeft()
+        x = t.x() * TILE_SIZE + self._offset.x()
+        y = t.y() * TILE_SIZE + self._offset.y()
+
+        return QtCore.QRect(x, y, TILE_SIZE, TILE_SIZE)        
 
 
 class SlippyMap(QtCore.QObject):

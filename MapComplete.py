@@ -1,3 +1,5 @@
+import sys
+
 import sip
 sip.setapi('QVariant',2)
 
@@ -12,16 +14,15 @@ class MapComplete(QApplication):
     def __init__(self, args):
         super(MapComplete, self).__init__(args)
 
-        # TODO: should use QMainWindow?
+        window = QMainWindow(None)
+        self.setApplicationName("MapComplete")
+        window.setWindowTitle("MapComplete")        
         mapView = MapView()
-        # mapView.showMaximized()
-        mapView.show()
-
-        self.exec_()
+        window.setCentralWidget(mapView)
+        window.show()
+        sys.exit(self.exec_())
 
 
 if __name__ == '__main__':
-    import sys
-    from MapComplete import MapComplete
 
     mapComplete = MapComplete(sys.argv)

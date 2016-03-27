@@ -24,12 +24,14 @@ class MapScene(QGraphicsScene):
     def __init__(self, view):
         super(MapScene, self).__init__(view)
 
-        self.view = view;
+        self.view = view
+
+        self.zoomLevel = 0
 
         self.setSceneRect(-TILE_SIZE, -TILE_SIZE, 3*TILE_SIZE, 3*TILE_SIZE)
 
         self.tileServer = SimpleGoogleTileServer()
-        self.tileServer.updated.connect(self.invalidate)
+        self.tileServer.updated.connect(self.tileAvailable)
 
         self.setItemIndexMethod(QGraphicsScene.NoIndex)
 
@@ -38,6 +40,10 @@ class MapScene(QGraphicsScene):
         self.tilesToDisplay = self.createItemGroup([])
 
 
+    def tileAvailable(self, tilekey):
+        print "available tilekey", tilekey
+        self.invalidate()
+
 
 
     def drawBackground(self, painter, rect):
@@ -45,8 +51,6 @@ class MapScene(QGraphicsScene):
         painter.eraseRect(rect)
 
         painter.drawRect(0, 0, TILE_SIZE, TILE_SIZE)
-
-        z = self.view.zoom
 
         viewport = self.view.mapToScene(self.view.viewport().geometry()).boundingRect()        
 
@@ -62,15 +66,15 @@ class MapScene(QGraphicsScene):
         # bottomRightCorner = MapPosition.fromNormalized(rightNormalizedCorner, bottomNormalizedCorner)
         # colLastIndex, rowLastIndex = bottomRightCorner.getTileIndicesGoogle(z)
 
-        colFirstIndex = max(0, int(floor(2**z * leftNormalizedCorner)))
-        colLastIndex = min(2**z - 1, int(floor(2**z * rightNormalizedCorner)))
+        colFirstIndex = max(0, int(floor(2**self.zoomLevel * leftNormalizedCorner)))
+        colLastIndex = min(2**self.zoomLevel - 1, int(floor(2**self.zoomLevel * rightNormalizedCorner)))
 
-        rowFirstIndex = max(0, int(floor(2**z * bottomNormalizedCorner)))
-        rowLastIndex = min(2**z - 1, int(floor(2**z * topNormalizedCorner)))
+        rowFirstIndex = max(0, int(floor(2**self.zoomLevel * bottomNormalizedCorner)))
+        rowLastIndex = min(2**self.zoomLevel - 1, int(floor(2**self.zoomLevel * topNormalizedCorner)))
 
 
-        print "rows:", rowFirstIndex, rowLastIndex
-        print "cols:", colFirstIndex, colLastIndex
+        # print "rows:", rowFirstIndex, rowLastIndex
+        # print "cols:", colFirstIndex, colLastIndex
         print
 
 
@@ -78,10 +82,12 @@ class MapScene(QGraphicsScene):
             for col in xrange(colFirstIndex, colLastIndex+1): #2**z):
 
 
-                posx = col * TILE_SIZE / 2**z
-                posy = (row + 1) * TILE_SIZE / 2**z
-                scalex = 1.0/2**z
-                scaley = -1.0/2**z
+                posx = float(col) * TILE_SIZE / 2**self.zoomLevel
+                posy = float(row + 1) * TILE_SIZE / 2**self.zoomLevel
+                scalex = 1.0/2**self.zoomLevel
+                scaley = -1.0/2**self.zoomLevel
+
+                #print row, col, posx, posy
 
 
                 tileRect = QRectF(posx,posy,TILE_SIZE*scalex,TILE_SIZE*scaley)
@@ -104,7 +110,7 @@ class MapScene(QGraphicsScene):
                 painter.restore()
 
     def drawGridCell(self, painter, col, row):
-        z = self.view.zoom
+        z = self.zoomLevel
         size = 2**z
         x = col;
         y = size - row - 1
@@ -113,42 +119,6 @@ class MapScene(QGraphicsScene):
         filename = os.path.join(os.getcwd(), imagename);
 
         painter.drawPixmap(0, 0, self.tileServer.getTile(x,y,z)) #QPixmap(filename))
-
-
-    # def getVisibleTiles(self, rect):
-    #     import os
-
-    #     print rect
-    #     print self.view.zoom
-    #     print
-
-    #     wholeTile = QPixmap(os.path.join(os.getcwd(), "wholeTile.png"))
-
-    #     return []
-
-
-    # def drawCosmeticText(self, painter, rect, string, fontsize = 0.1):
-    #     painter.save()
-
-    #     painter.translate(rect.center())
-
-    #     scalex = self.parent().transform().m11()
-    #     scaley = self.parent().transform().m22()
-
-    #     painter.drawText(0, 0, QString("i"))
-
-    #     font = QFont(painter.font())
-    #     size = fontsize / self.parent().transform().m11()
-    #     font.setPointSizeF(0.01)
-    #     painter.setFont(font)
-
-    #     painter.translate(rect.center())
-    #     painter.scale(1,-1)
-
-    #     painter.drawText(QRectF(-1000, -1000, 2000, 2000), Qt.AlignHCenter|Qt.AlignVCenter, QString("s"))
-
-    #     painter.restore()
-
 
 
 

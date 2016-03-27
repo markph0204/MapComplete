@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from math import floor, sqrt
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -11,23 +13,27 @@ class MapView(QGraphicsView):
 
     MINZOOM = 0
     MAXZOOM = 20
+    ZOOM_STEP = 0.25
 
     def __init__(self):
         super(MapView, self).__init__()
 
         self.configure()
 
-        self.zoom = self.MINZOOM
-
         scene = MapScene(self)
         self.setScene(scene)
         self.ensureVisible(self.scene().sceneRect())
+
+        self.zoomLevel = 0;
+
+        self.setZoomLevel(0);
 
 
     def configure(self):
         self.setCacheMode(QGraphicsView.CacheNone)
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.setRenderHint(QPainter.Antialiasing)
+        self.setRenderHint(QPainter.SmoothPixmapTransform)
 
         # perform zoom around mouse position
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
@@ -40,18 +46,20 @@ class MapView(QGraphicsView):
 
 
     def wheelEvent(self, event):
-        if(event.delta() > 0):
-            self.zoom = min(self.zoom+1, self.MAXZOOM)
-        else:
-            self.zoom = max(self.zoom-1, self.MINZOOM)
+        newZoomLevel = (min(self.zoomLevel + self.ZOOM_STEP, 2**self.MAXZOOM)
+                        if event.delta() > 0 
+                        else max(self.zoomLevel - self.ZOOM_STEP, 2**self.MINZOOM))
 
-    @property
-    def zoom(self):
-        return self._zoom
+        self.setZoomLevel(newZoomLevel)
 
-    @zoom.setter
-    def zoom(self, z):
-        self._zoom = z
-        scale = 2**z
-        translate = scale * TILE_SIZE
+
+    def setZoomLevel(self, newZoomLevel):
+
+        self.zoomLevel = newZoomLevel
+
+        scale = 2**newZoomLevel
+        translate = scale*TILE_SIZE
         self.setTransform(QTransform(scale,0,0,-scale,0,translate))
+
+        self.scene().zoomLevel = int(newZoomLevel)
+
