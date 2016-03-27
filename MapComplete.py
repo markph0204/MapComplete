@@ -16,7 +16,7 @@ class MapComplete(QApplication):
 
         window = QMainWindow(None)
         self.setApplicationName("MapComplete")
-        window.setWindowTitle("MapComplete")        
+        window.setWindowTitle("MapComplete")
         mapView = MapView()
         window.setCentralWidget(mapView)
         window.show()

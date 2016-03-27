@@ -13,6 +13,7 @@ class MapView(QGraphicsView):
 
     MINZOOM = 0
     MAXZOOM = 20
+
     ZOOM_STEP = 0.25
 
     def __init__(self):
@@ -35,13 +36,10 @@ class MapView(QGraphicsView):
         self.setRenderHint(QPainter.Antialiasing)
         self.setRenderHint(QPainter.SmoothPixmapTransform)
 
-        # perform zoom around mouse position
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
 
-        # keep centered while resizing
         self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
 
-        # make draggable
         self.setDragMode(QGraphicsView.ScrollHandDrag)
 
 

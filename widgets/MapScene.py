@@ -10,14 +10,6 @@ from lib.tileOperations import *
 from lib.MapPosition import *
 from tileServers.SimpleGoogleTileServer import *
 
-# class GGraphicsPathItem(QGraphicsPathItem):
-#     def __init__(self, latlonpath):
-#         super(GGraphicsPathItem, self).__init__(latlonpath)
-#         self.latlonpath = latlonpath
-
-#     def shape(self):
-    
-
 
 class MapScene(QGraphicsScene):
 
@@ -41,61 +33,40 @@ class MapScene(QGraphicsScene):
 
 
     def tileAvailable(self, tilekey):
-        print "available tilekey", tilekey
-        self.invalidate()
-
+        self.invalidate()  ## it would be nice to invalidate only the appropriate tile rect
 
 
     def drawBackground(self, painter, rect):
-
         painter.eraseRect(rect)
 
         painter.drawRect(0, 0, TILE_SIZE, TILE_SIZE)
 
-        viewport = self.view.mapToScene(self.view.viewport().geometry()).boundingRect()        
+        viewport = self.view.mapToScene(self.view.viewport().geometry()).boundingRect()
 
         leftNormalizedCorner = viewport.left()/TILE_SIZE
         rightNormalizedCorner = viewport.right()/TILE_SIZE
         bottomNormalizedCorner = viewport.top()/TILE_SIZE
         topNormalizedCorner = viewport.bottom()/TILE_SIZE
 
+        zoomSquare = 2**self.zoomLevel
 
-        # upperLeftCorner = MapPosition.fromNormalized(leftNormalizedCorner, topNormalizedCorner)
-        # colFirstIndex, rowFirstIndex = upperLeftCorner.getTileIndicesGoogle(z)
+        colFirstIndex = max(0, int(floor(zoomSquare * leftNormalizedCorner)))
+        colLastIndex = min(zoomSquare - 1, int(floor(zoomSquare * rightNormalizedCorner)))
 
-        # bottomRightCorner = MapPosition.fromNormalized(rightNormalizedCorner, bottomNormalizedCorner)
-        # colLastIndex, rowLastIndex = bottomRightCorner.getTileIndicesGoogle(z)
-
-        colFirstIndex = max(0, int(floor(2**self.zoomLevel * leftNormalizedCorner)))
-        colLastIndex = min(2**self.zoomLevel - 1, int(floor(2**self.zoomLevel * rightNormalizedCorner)))
-
-        rowFirstIndex = max(0, int(floor(2**self.zoomLevel * bottomNormalizedCorner)))
-        rowLastIndex = min(2**self.zoomLevel - 1, int(floor(2**self.zoomLevel * topNormalizedCorner)))
+        rowFirstIndex = max(0, int(floor(zoomSquare * bottomNormalizedCorner)))
+        rowLastIndex = min(zoomSquare - 1, int(floor(zoomSquare * topNormalizedCorner)))
 
 
-        # print "rows:", rowFirstIndex, rowLastIndex
-        # print "cols:", colFirstIndex, colLastIndex
-        print
+        for row in xrange(rowFirstIndex, rowLastIndex+1):
+            for col in xrange(colFirstIndex, colLastIndex+1):
 
-
-        for row in xrange(rowFirstIndex, rowLastIndex+1): #2**z):
-            for col in xrange(colFirstIndex, colLastIndex+1): #2**z):
-
-
-                posx = float(col) * TILE_SIZE / 2**self.zoomLevel
-                posy = float(row + 1) * TILE_SIZE / 2**self.zoomLevel
-                scalex = 1.0/2**self.zoomLevel
-                scaley = -1.0/2**self.zoomLevel
-
-                #print row, col, posx, posy
-
+                posx = float(col) * TILE_SIZE / zoomSquare
+                posy = float(row + 1) * TILE_SIZE / zoomSquare
+                scalex = 1.0/zoomSquare
+                scaley = -1.0/zoomSquare
 
                 tileRect = QRectF(posx,posy,TILE_SIZE*scalex,TILE_SIZE*scaley)
                 intersects = tileRect.intersects(viewport)
-
-                # print posx, posy, scalex, scaley
-                # print tileRect, viewport, intersects
-                # print
 
                 if not intersects:
                     continue
@@ -109,6 +80,7 @@ class MapScene(QGraphicsScene):
 
                 painter.restore()
 
+
     def drawGridCell(self, painter, col, row):
         z = self.zoomLevel
         size = 2**z
@@ -118,13 +90,11 @@ class MapScene(QGraphicsScene):
         imagename = "{}_{}_{}.jpg".format(x, y, z)
         filename = os.path.join(os.getcwd(), imagename);
 
-        painter.drawPixmap(0, 0, self.tileServer.getTile(x,y,z)) #QPixmap(filename))
+        painter.drawPixmap(0, 0, self.tileServer.getTile(x,y,z))
 
 
 
 
-
-    ## REFACTOR: THIS SHOULD HAPPEN IN THE SCENE, NOT THE VIEW!
     def addContinents(self):
         self.addLineString("""
             -51.03813197260379,-29.91035059896753,0

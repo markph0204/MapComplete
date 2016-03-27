@@ -8,7 +8,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtNetwork import *
 
 from lib.tileOperations import *
-#from tileServers import *
+
 
 class SimpleGoogleTileServer(QObject):
 
@@ -28,8 +28,7 @@ class SimpleGoogleTileServer(QObject):
         self.networkManager.finished.connect(self.processDownloadedTile)
 
         self._tilePixmaps = {}
-
-        self.tilekey = (0,0,0)
+        self._tilesToDownload = set()
 
         self.urltemplate = 'https://mts{r}.google.com/vt?lyrs=y&x={x}&y={y}&z={z}'
 
@@ -41,8 +40,10 @@ class SimpleGoogleTileServer(QObject):
 
         tilekey = (x, y, z)
 
-        if tilekey not in self._tilePixmaps:
-            #print tilekey
+        print "SimpleGoogleTileServer.getTile({})".format(tilekey)
+        print self._tilesToDownload
+
+        if tilekey not in self._tilePixmaps and tilekey not in self._tilesToDownload:
             url = self.urltemplate.format(x=x, y=y, z=z, r=random.choice(range(1,4)))
             qurl = QUrl(url)
             request = QNetworkRequest()
@@ -50,18 +51,19 @@ class SimpleGoogleTileServer(QObject):
             request.setRawHeader('User-Agent', 'Nokia (PyQt) Graphics Dojo 1.0')
             request.setAttribute(QNetworkRequest.User, tilekey)
             self.networkManager.get(request)
+            self._tilesToDownload.add(tilekey)
 
-        return self._tilePixmaps.get(tilekey, self._emptyTile) #image_cache[tilekey]
+        return self._tilePixmaps.get(tilekey, self._emptyTile)
 
 
     def processDownloadedTile(self, reply):
-        img = QImage()
         tilekey = reply.request().attribute(QNetworkRequest.User)
         url = reply.url()
         if not reply.error():
+            img = QImage()
             if img.load(reply, None):
                 self._tilePixmaps[tilekey] = QPixmap.fromImage(img)
+                self.updated.emit(tilekey)
+                if tilekey in self._tilesToDownload:
+                    self._tilesToDownload.remove(tilekey)
         reply.deleteLater()
-
-        self.updated.emit(tilekey)
-
