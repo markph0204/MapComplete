@@ -94,8 +94,8 @@ class MapScene(QGraphicsScene):
 
 
     def add(self, kmldocument):
-        for linestring in kmldocument.linestrings():
-            self.addLineString(linestring)
+        for linestring in kmldocument.linestrings:
+            self.addLineString(linestring.coordstring)
 
 
     def addContinents(self):

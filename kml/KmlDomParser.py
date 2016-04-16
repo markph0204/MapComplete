@@ -30,8 +30,8 @@ The <kml> element should contain at least one of the following possible elements
 class LineString(object):
     def __init__(self, linestringnode):
         self.node = linestringnode
-        coordstring = linestringnode.getElementsByTagName("coordinates")[0].firstChild.nodeValue
-        self.coords = self.parseLineStringCoordinates(coordstring)
+        self.coordstring = linestringnode.getElementsByTagName("coordinates")[0].firstChild.nodeValue
+        self.coords = self.parseLineStringCoordinates(self.coordstring)
         self.lats = [c[1] for c in self.coords]
         self.lons = [c[0] for c in self.coords]
 
@@ -87,7 +87,7 @@ class Kml(object):
             nodeName = node.nodeName
 
             if nodeName == "name":
-                print "Nome:", node.firstChild.nodeValue
+                print "Nome:", node.firstChild.nodeValue.encode('utf-8')
             if nodeName == "LineString":
                 self.processLineString(node)
             else:

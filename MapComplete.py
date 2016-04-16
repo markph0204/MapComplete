@@ -1,3 +1,5 @@
+#coding:utf-8
+
 import sys
 
 import sip
@@ -24,8 +26,20 @@ class MapComplete(QApplication):
         _open.addAction("KML from file...",self.KmlFromFile)
         _open.addAction("KML from link...",self.KmlFromLink)
 
+        # create left panel (treeview)
+        self.leftPanel = QTreeView()
+        # create mapView()
         self.mapView = MapView()
-        window.setCentralWidget(self.mapView)
+
+        # create something to put the treeview and the mapview
+        self.splitter = QSplitter(window)
+
+        self.splitter.addWidget(self.leftPanel)
+        self.splitter.addWidget(self.mapView)
+
+        # set central widget as the widget that contains both
+        window.setCentralWidget(self.splitter)
+
         window.show()
         sys.exit(self.exec_())
 
@@ -36,10 +50,10 @@ class MapComplete(QApplication):
         filenames = QStringList()
 
         if dlg.exec_():
-            filename = dlg.selectedFiles()[0]
+            filename = str(dlg.selectedFiles()[0])
             kml = Kml(filename)
             self.mapView.scene().add(kml)
-
+            ##self.leftPanel.add(kml) #### NEED TO IMPLEMENT A WAY TO "ADD" THE KML FILE TO THE TreeWidget
 
     def KmlFromLink(self):
         pass
