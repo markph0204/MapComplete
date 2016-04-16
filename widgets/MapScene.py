@@ -93,6 +93,9 @@ class MapScene(QGraphicsScene):
         painter.drawPixmap(0, 0, self.tileServer.getTile(x,y,z))
 
 
+    def add(self, kmldocument):
+        for linestring in kmldocument.linestrings():
+            self.addLineString(linestring)
 
 
     def addContinents(self):

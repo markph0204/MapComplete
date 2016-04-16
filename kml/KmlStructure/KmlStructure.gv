@@ -1,0 +1,115 @@
+digraph g {
+
+rankdir = "RL"
+
+node [shape="record"]
+
+subgraph interest
+{
+	node [style="filled", bgcolor="#ccc"]
+
+	Document [label="Document|Features\lSchemas\l"]
+	Folder
+	Placemark
+	Style
+	LineString
+	Point
+	Polygon
+	LinearRing
+	GroundOverlay
+	LineStyle
+	PolyStyle
+	IconStyle
+}
+
+//vec2
+
+AbstractObject [label="AbstractObject|Id : string"]
+
+AbstractFeature [label="AbstractFeature|name\lvisibility\lopen\laddress\lphone\lregion\ldescription\lstyleUrl\lStyleSelector\l"]
+AbstractFeature -> AbstractObject
+AbstractView -> AbstractObject
+AbstractGeometry -> AbstractObject
+AbstractStyleSelector -> AbstractObject
+AbstractTimePrimitive -> AbstractObject
+
+AbstractContainer -> AbstractFeature
+AbstractOverlay -> AbstractFeature
+
+Document -> AbstractContainer
+Folder -> AbstractContainer
+
+Placemark [label="Placemark|geometry"]
+Placemark -> AbstractFeature
+NetworkLink -> AbstractFeature
+
+
+//Snippet -> string
+//LookAt -> AbstractView
+//Camera -> AbstractView
+//Metadata
+//ExtendedData
+//SchemaData -> AbstractObject
+
+//SimpleData -> string
+//Data -> AbstractObject
+
+
+Kml
+NetworkLinkControl
+Schema
+SimpleField
+Region -> AbstractObject
+LatLonAltBox -> AbstractLatLonBox
+Lod -> AbstractObject
+Link -> BasicLink
+MultiGeometry -> AbstractGeometry
+Point -> AbstractGeometry
+LineString -> AbstractGeometry
+LinearRing -> AbstractGeometry
+Polygon -> AbstractGeometry
+Boundary
+
+/*
+Model -> AbstractGeometry
+Location -> AbstractObject
+Orientation -> AbstractObject
+Scale -> AbstractObject
+*/
+
+//ResourceMap -> AbstractObject
+//Alias -> AbstractObject
+GroundOverlay -> AbstractOverlay
+AbstractLatLonBox -> AbstractObject
+LatLonBox -> AbstractLatLonBox
+
+ScreenOverlay -> AbstractOverlay
+PhotoOverlay -> AbstractOverlay
+ViewVolume -> AbstractObject
+
+//ImagePyramid -> AbstractObject
+
+Style [label="Style|IconStyle\lLineStyle\lPolyStyle\lBaloonStyle\lListStyle\lLabelStyle\l"]
+Style -> AbstractStyleSelector
+StyleMap -> AbstractStyleSelector
+
+//Pair -> AbstractObject
+
+AbstractSubStyle -> AbstractObject
+AbstractColorStyle -> AbstractSubStyle
+IconStyle -> AbstractColorStyle
+BasicLink -> AbstractObject
+LabelStyle -> AbstractColorStyle
+LineStyle -> AbstractColorStyle
+PolyStyle -> AbstractColorStyle
+BalloonStyle -> AbstractSubStyle
+ListStyle -> AbstractSubStyle
+
+ItemIcon -> AbstractObject
+
+/*
+TimeStamp -> AbstractTimePrimitive
+TimeSpan -> AbstractTimePrimitive
+*/
+
+}
