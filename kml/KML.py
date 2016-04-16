@@ -1,6 +1,23 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+class AbstractObject(object)
+    def __init__(self):
+        self.id = None;
+
+class Kml(object):
+    def __init__(self):
+        self.networkLinkControl = None
+        self.abstractFeature = None
+        self.simpleExtensions = []
+        self.objectExtensions = []
+
+class AbstractFeature(AbstractObject):
+    pass
+
+class NetworkLinkControl(object):
+    pass
+
 class Object(object):
     def __init__(self, _id = ""):
         self.id = _id
