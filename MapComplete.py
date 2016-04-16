@@ -7,7 +7,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 from widgets.MapView import *
-from kml.KmlDocument import *
+from kml.KmlDomParser import *
 
 
 class MapComplete(QApplication):
@@ -37,7 +37,7 @@ class MapComplete(QApplication):
 
         if dlg.exec_():
             filename = dlg.selectedFiles()[0]
-            kml = KmlDocument(filename)
+            kml = Kml(filename)
             self.mapView.scene().add(kml)
 
 

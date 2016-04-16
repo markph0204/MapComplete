@@ -40,9 +40,6 @@ class SimpleGoogleTileServer(QObject):
 
         tilekey = (x, y, z)
 
-        print "SimpleGoogleTileServer.getTile({})".format(tilekey)
-        print self._tilesToDownload
-
         if tilekey not in self._tilePixmaps and tilekey not in self._tilesToDownload:
             url = self.urltemplate.format(x=x, y=y, z=z, r=random.choice(range(1,4)))
             qurl = QUrl(url)
