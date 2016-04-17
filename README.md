@@ -1,6 +1,6 @@
 # MapComplete
 
-## A pragmatic map viewer and editor for the desktop.
+## The pragmatic map viewer and editor for the desktop.
 
 Desired Features:
 
