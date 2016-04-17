@@ -1,6 +1,6 @@
 # MapComplete
 
-## Mapping software that does what you want.
+## A pragmatic map viewer and editor for the desktop.
 
 Desired Features:
 
