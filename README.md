@@ -21,8 +21,14 @@ Currently we have no installer. To run the program:
 
 ----------------------------
 
-If you want to contribute to this project, we recommend that you read the [Wiki](https://github.com/heltonbiker/MapComplete/wiki) and the current [Issues](https://github.com/heltonbiker/MapComplete/issues).
+## Want to contribute?
 
-If you want to discuss any new development or ongoing development, feel free to open a new Issue!
+We recommend that you read the [Wiki](https://github.com/heltonbiker/MapComplete/wiki) and the current [Issues](https://github.com/heltonbiker/MapComplete/issues).
+
+If you want to discuss any new development or ongoing development we suggest you one or more of the following actions:
+- Participate on the project's [mailing list](https://groups.google.com/forum/#!forum/mapcomplete)!
+- Open a new Issue;
+- Fork the `dev` branch and start creating Pull Requests.
+
 
 ------------------------------
