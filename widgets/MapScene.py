@@ -27,10 +27,12 @@ class MapScene(QGraphicsScene):
 
         self.setItemIndexMethod(QGraphicsScene.NoIndex)
 
-        self.addContinents()
+        ##self.addContinents()
 
         self.tilesToDisplay = self.createItemGroup([])
 
+    def setModel(self, model):
+        pass
 
     def tileAvailable(self, tilekey):
         self.invalidate()  ## it would be nice to invalidate only the appropriate tile rect

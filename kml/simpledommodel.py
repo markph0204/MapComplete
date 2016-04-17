@@ -91,6 +91,7 @@ class DomModel(QtCore.QAbstractItemModel):
         return 3
 
     def data(self, index, role):
+        print "called data"
         if not index.isValid():
             return None
 

@@ -9,7 +9,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 from widgets.MapView import *
-from kml.KmlDomParser import *
+from MapModel import *
 
 
 class MapComplete(QApplication):
@@ -17,31 +17,39 @@ class MapComplete(QApplication):
     def __init__(self, args):
         super(MapComplete, self).__init__(args)
 
-        window = QMainWindow(None)
+        self.window = QMainWindow(None)
         self.setApplicationName("MapComplete")
-        window.setWindowTitle("MapComplete")
+        self.window.setWindowTitle("MapComplete")
 
-        bar = window.menuBar()
-        _open = bar.addMenu("Open")
+        self.menuBar = self.window.menuBar()
+        _open = self.menuBar.addMenu("Open")
         _open.addAction("KML from file...",self.KmlFromFile)
         _open.addAction("KML from link...",self.KmlFromLink)
 
-        # create left panel (treeview)
-        self.leftPanel = QTreeView()
-        # create mapView()
+        self.mapModel = MapModel()
+
         self.mapView = MapView()
+        self.treeView = QTreeView()
+        self.treeView.header().hide()
 
-        # create something to put the treeview and the mapview
-        self.splitter = QSplitter(window)
+        self.mapView.scene().setModel(self.mapModel)
+        self.treeView.setModel(self.mapModel)
 
-        self.splitter.addWidget(self.leftPanel)
+        self.splitter = QSplitter(self.window)
+
+        self.splitter.addWidget(self.treeView)
         self.splitter.addWidget(self.mapView)
 
-        # set central widget as the widget that contains both
-        window.setCentralWidget(self.splitter)
+        self.addContinents()
 
-        window.show()
+        self.window.setCentralWidget(self.splitter)
+
+        self.window.show()
         sys.exit(self.exec_())
+
+    def addContinents(self):   # this is temporary      
+        kmlPath = "resources/continents.kml"
+        self.mapModel.addKml(kmlPath)
 
     def KmlFromFile(self):
         dlg = QFileDialog()
@@ -51,11 +59,12 @@ class MapComplete(QApplication):
 
         if dlg.exec_():
             filename = str(dlg.selectedFiles()[0]).encode('utf-8')
-            kml = Kml(filename)
-            self.mapView.scene().add(kml)
-            ##self.leftPanel.add(kml) #### Need to set the model for the TreeView, and then add the kml file to that model
+            self.mapModel.addKml(MapModel)
 
     def KmlFromLink(self):
+        # display a dialog with a textbox where the user should type or paste a valid link;
+        # upon OK, if the file is valid dialog closes and link is loaded
+        # otherwise an "invalid link" message is displayed and the dialog remains open
         pass
 
 
