@@ -50,10 +50,10 @@ class MapComplete(QApplication):
         filenames = QStringList()
 
         if dlg.exec_():
-            filename = str(dlg.selectedFiles()[0])
+            filename = str(dlg.selectedFiles()[0]).encode('utf-8')
             kml = Kml(filename)
             self.mapView.scene().add(kml)
-            ##self.leftPanel.add(kml) #### NEED TO IMPLEMENT A WAY TO "ADD" THE KML FILE TO THE TreeWidget
+            ##self.leftPanel.add(kml) #### Need to set the model for the TreeView, and then add the kml file to that model
 
     def KmlFromLink(self):
         pass
