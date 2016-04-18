@@ -19,6 +19,8 @@ Currently we have no installer. To run the program:
 1. Clone the repository, or download it as a zip and extract it;
 2. Execute the `MapComplete.py` file in the root folder.
 
+You should have Python 2.7 and PyQt4 already installed.
+
 ----------------------------
 
 ## Want to contribute?
