@@ -4,7 +4,38 @@ rankdir = "RL"
 
 node [shape="record"]
 
-subgraph interest
+// http://stackoverflow.com/a/7062842/401828  !!!!!
+
+subgraph NativeTypes {
+	double
+	string
+	hexBinary
+}
+
+subgraph Types
+{
+	anglepos90
+	angle90
+	anglepos180
+	angle180
+	angle360
+	altitudeModeEnum
+	color
+	coordinates
+	colorModeEnum
+	dateTime
+	displayModeEnum
+	gridOriginEnum
+	itemIconState
+	itemIconStateEnum
+	listItemTypeEnum
+	refreshModeEnum
+	viewRefreshModeEnum
+	shapeEnum
+	styleStateEnum
+}
+
+subgraph Element
 {
 	node [style="filled", bgcolor="#ccc"]
 
@@ -22,7 +53,22 @@ subgraph interest
 	IconStyle
 }
 
-//vec2
+anglepos90 -> double
+angle90 -> double
+anglepos180 -> double
+angle180 -> double
+angle360 -> double
+
+altitudeModeEnum -> string
+color -> hexBinary
+coordinates -> string
+colorModeEnum -> string
+displayModeEnum -> string
+gridOriginEnum -> string
+
+listItemTypeEnum -> string
+
+vec2
 
 AbstractObject [label="AbstractObject|Id : string"]
 
@@ -39,10 +85,11 @@ AbstractOverlay -> AbstractFeature
 Document -> AbstractContainer
 Folder -> AbstractContainer
 
-Placemark [label="Placemark|geometry"]
+Placemark [label="Placemark|<f1>geometry"]
 Placemark -> AbstractFeature
 NetworkLink -> AbstractFeature
 
+Placemark:f1 -> AbstractGeometry
 
 //Snippet -> string
 //LookAt -> AbstractView
@@ -58,7 +105,7 @@ NetworkLink -> AbstractFeature
 Kml
 NetworkLinkControl
 Schema
-SimpleField
+//SimpleField
 Region -> AbstractObject
 LatLonAltBox -> AbstractLatLonBox
 Lod -> AbstractObject

@@ -11,7 +11,6 @@ from PyQt4.QtCore import *
 from widgets.MapView import *
 from MapModel import *
 
-
 class MapComplete(QApplication):
 
     def __init__(self, args):
@@ -34,6 +33,7 @@ class MapComplete(QApplication):
 
         self.mapView.scene().setModel(self.mapModel)
         self.treeView.setModel(self.mapModel)
+        self.treeView.expandAll()
 
         self.splitter = QSplitter(self.window)
 
@@ -49,7 +49,7 @@ class MapComplete(QApplication):
 
     def addContinents(self):   # this is temporary      
         kmlPath = "resources/continents.kml"
-        self.mapModel.addKml(kmlPath)
+        self.mapModel.addKmlFile(kmlPath)
 
     def KmlFromFile(self):
         dlg = QFileDialog()
