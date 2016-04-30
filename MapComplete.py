@@ -28,10 +28,14 @@ class MapComplete(QApplication):
         self.mapModel = MapModel()
 
         self.mapView = MapView()
+
         self.treeView = QTreeView()
         self.treeView.header().hide()
+        self.treeView.setDragDropMode(QAbstractItemView.InternalMove)
 
-        self.mapView.scene().setModel(self.mapModel)
+        # self.mapView.scene().setModel(self.mapModel)
+        # self.mapView.setScene(self.mapModel.mapScene)
+        
         self.treeView.setModel(self.mapModel)
         self.treeView.expandAll()
 

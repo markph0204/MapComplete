@@ -14,6 +14,7 @@ class MapModel(QStandardItemModel):
         super(MapModel, self).__init__(None)
         # self.level = 0
         # self.maxlevel = 10
+        self.mapScene = None
 
 
     def addKmlFile(self, path):
@@ -24,11 +25,13 @@ class MapModel(QStandardItemModel):
 
         item = QStandardItem()
         item.setData(kmlNode)
-        kmlName = "arquivo: " + os.path.basename(path)
+        kmlName = "File: " + os.path.basename(path)
         item.setText(kmlName)
         self.appendRow(item)
 
-        self.parseNodes(item)         
+        self.parseNodes(item)
+
+        self.mapScene = QGraphicsScene();
 
 
     def parseNodes(self, item):

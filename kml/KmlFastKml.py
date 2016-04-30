@@ -1,8 +1,8 @@
-from fastkml import kml
+from fastkml.kml import *
 
 fname = '../resources/continents.kml'
 
-k = kml.KML()
+k = KML()
 
 k.from_string(open(fname).read())
 
