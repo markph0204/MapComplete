@@ -2,9 +2,10 @@
 
 import os
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtNetwork import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtNetwork import *
+from PyQt5.QtWidgets import *
 
 from lib.tileOperations import *
 from lib.MapPosition import *
@@ -57,8 +58,8 @@ class MapScene(QGraphicsScene):
         rowLastIndex = min(zoomSquare - 1, int(floor(zoomSquare * topNormalizedCorner)))
 
 
-        for row in xrange(rowFirstIndex, rowLastIndex+1):
-            for col in xrange(colFirstIndex, colLastIndex+1):
+        for row in range(rowFirstIndex, rowLastIndex+1):
+            for col in range(colFirstIndex, colLastIndex+1):
 
                 posx = float(col) * TILE_SIZE / zoomSquare
                 posy = float(row + 1) * TILE_SIZE / zoomSquare
@@ -214,7 +215,8 @@ class MapScene(QGraphicsScene):
         coordtuples = re.split('\s+', kmlLineString.strip())
         coords = []
         for coordtuple in coordtuples:
-            coordvalues = map(float, coordtuple.split(','))
+            coordvaluesMap = map(float, coordtuple.split(','))
+            coordvalues = list(map(int,coordvaluesMap))
             coordvalues[0] = (coordvalues[0] + 180) % 360 - 180
             lat, lon = latlontopixels(coordvalues[1], coordvalues[0], 0)
             coords.append((lat, lon))

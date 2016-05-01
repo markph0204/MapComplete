@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding:utf-8
 
-from tileOperations import *
+from lib.tileOperations import *
 from math import *
 
 class MapPosition(object):
@@ -76,6 +76,6 @@ class MapPosition(object):
 if __name__ == '__main__':
     
     ll = MapPosition(0,0)
-    print ll
-    print ll.latitude
-    print ll.longitude
+    print(ll)
+    print(ll.latitude)
+    print(ll.longitude)

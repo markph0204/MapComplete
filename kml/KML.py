@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-class AbstractObject(object)
+class AbstractObject(object):
     def __init__(self):
-        self.id = None;
+        self.id = None
 
 class Kml(object):
     def __init__(self):
@@ -49,6 +49,3 @@ class KmlDocument(object):
     #     self.visibility = True
     #     self.open = False
     #     self.address = ""
-
-        
-    

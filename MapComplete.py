@@ -3,11 +3,12 @@ import sys
 import sip
 sip.setapi('QVariant',2)
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 from widgets.MapView import *
-from kml.KmlDocument import *
+#from kml.KmlDocument import *
+from kml import *
 
 
 class MapComplete(QApplication):

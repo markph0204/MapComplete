@@ -2,11 +2,11 @@
 
 from math import floor, sqrt
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 from lib import *
-from MapScene import *
+from widgets.MapScene import *
 
 
 class MapView(QGraphicsView):
@@ -42,12 +42,10 @@ class MapView(QGraphicsView):
 
         self.setDragMode(QGraphicsView.ScrollHandDrag)
 
-
-    def wheelEvent(self, event):
-        newZoomLevel = (min(self.zoomLevel + self.ZOOM_STEP, 2**self.MAXZOOM)
-                        if event.delta() > 0 
-                        else max(self.zoomLevel - self.ZOOM_STEP, 2**self.MINZOOM))
-
+    def wheelEvent(self, event: QWheelEvent):
+        newZoomLevel = (min(self.zoomLevel + self.ZOOM_STEP, 2 ** self.MAXZOOM)
+                        if event.angleDelta().y() > 0
+                        else max(self.zoomLevel - self.ZOOM_STEP, 2 ** self.MINZOOM))
         self.setZoomLevel(newZoomLevel)
 
 

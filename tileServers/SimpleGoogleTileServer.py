@@ -3,9 +3,11 @@
 
 import random
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtNetwork import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtNetwork import *
+from PyQt5.QtWidgets import *
+
 
 from lib.tileOperations import *
 
@@ -20,8 +22,7 @@ class SimpleGoogleTileServer(QObject):
         super(SimpleGoogleTileServer, self).__init__()
 
         cache = QNetworkDiskCache()
-        cacheDir = QDesktopServices.storageLocation(
-            QDesktopServices.CacheLocation)
+        cacheDir = QStandardPaths.writableLocation(QStandardPaths.GenericDataLocation)
         cache.setCacheDirectory(cacheDir)
         self.networkManager.setCache(cache)
 
@@ -40,15 +41,15 @@ class SimpleGoogleTileServer(QObject):
 
         tilekey = (x, y, z)
 
-        print "SimpleGoogleTileServer.getTile({})".format(tilekey)
-        print self._tilesToDownload
+        print("SimpleGoogleTileServer.getTile({})".format(tilekey))
+        print(self._tilesToDownload)
 
         if tilekey not in self._tilePixmaps and tilekey not in self._tilesToDownload:
             url = self.urltemplate.format(x=x, y=y, z=z, r=random.choice(range(1,4)))
             qurl = QUrl(url)
             request = QNetworkRequest()
             request.setUrl(qurl)
-            request.setRawHeader('User-Agent', 'Nokia (PyQt) Graphics Dojo 1.0')
+            request.setRawHeader(QByteArray().append('User-Agent'), QByteArray().append('Nokia (PyQt) Graphics Dojo 1.0'))
             request.setAttribute(QNetworkRequest.User, tilekey)
             self.networkManager.get(request)
             self._tilesToDownload.add(tilekey)

@@ -170,7 +170,7 @@ class SlippyMap(QtCore.QObject):
 
     def change_zoom(self, val):
         self.zoom = max(1, min(22, self.zoom + val))
-        print "ZOOM", self.zoom
+        print("ZOOM", self.zoom)
         self.invalidate();
 
 
